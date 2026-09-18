@@ -1,0 +1,129 @@
+{
+  "entities": {
+    "products": {
+      "title": "Internal Product",
+      "description": "Private catalog of security equipment used internally by staff for quotation preparation",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "brand": { "type": "string" },
+        "model": { "type": "string" },
+        "category": { "type": "string" },
+        "subcategory": { "type": "string" },
+        "technicalSpecifications": { "type": "object" },
+        "images": { "type": "array" },
+        "source": { "type": "string" },
+        "sourceProductId": { "type": "string" },
+        "internalPurchasePrice": { "type": "number" },
+        "internalSellingPrice": { "type": "number" },
+        "availability": { "type": "string" },
+        "stockStatus": { "type": "string" },
+        "active": { "type": "boolean" },
+        "lifecycleStatus": { "type": "string" },
+        "serviceTags": { "type": "array" },
+        "searchKeywords": { "type": "array" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "name", "category", "active", "lifecycleStatus"]
+    },
+    "quoteRequests": {
+      "title": "Quote Request",
+      "description": "Central customer demand object capturing security project requirements and solution snapshots",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "customer": { "type": "object" },
+        "project": { "type": "object" },
+        "services": { "type": "array" },
+        "selectedProducts": { "type": "array" },
+        "attachments": { "type": "array" },
+        "notes": { "type": "string" },
+        "language": { "type": "string" },
+        "source": { "type": "string" },
+        "status": { "type": "string" },
+        "assignedTo": { "type": "string" },
+        "internalNotes": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "customer", "project", "services", "status", "createdAt"]
+    },
+    "invoiceRequests": {
+      "title": "Invoice Request",
+      "description": "Administrative requests from customers regarding billing documents or references",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "company": { "type": "string" },
+        "phone": { "type": "string" },
+        "email": { "type": "string" },
+        "invoiceNumber": { "type": "string" },
+        "requestType": { "type": "string" },
+        "message": { "type": "string" },
+        "status": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["id", "name", "phone", "status", "createdAt"]
+    },
+    "productImports": {
+      "title": "Product Import Batch",
+      "description": "Audit record of external product imports with validation, preview, and approval status",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "source": { "type": "string" },
+        "startedAt": { "type": "string" },
+        "completedAt": { "type": "string" },
+        "status": { "type": "string" },
+        "totalRecords": { "type": "number" },
+        "created": { "type": "number" },
+        "updated": { "type": "number" },
+        "duplicates": { "type": "number" },
+        "errors": { "type": "number" },
+        "adminUserId": { "type": "string" },
+        "errorLog": { "type": "array" }
+      },
+      "required": ["id", "source", "startedAt", "status"]
+    },
+    "adminActivity": {
+      "title": "Admin Audit Log",
+      "description": "Append-only chronological audit log of operational actions",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "action": { "type": "string" },
+        "resource": { "type": "string" },
+        "resourceId": { "type": "string" },
+        "timestamp": { "type": "string" },
+        "previousValue": { "type": "object" },
+        "newValue": { "type": "object" }
+      },
+      "required": ["id", "userId", "action", "resource", "resourceId", "timestamp"]
+    },
+    "admins": {
+      "title": "Administrator Profile",
+      "description": "Authorized staff and administrator accounts for portal access and security enforcement",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "uid": { "type": "string" },
+        "email": { "type": "string" },
+        "role": { "type": "string" },
+        "displayName": { "type": "string" },
+        "provider": { "type": "string" },
+        "lastLogin": { "type": "string" },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["id", "email", "role"]
+    }
+  },
+  "firestore": {
+    "defaultRules": "firestore.rules"
+  }
+}

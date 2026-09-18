@@ -1,0 +1,50 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isStaff() {
+      return isAuthenticated() &&
+        (request.auth.token.email == 'ou2sema@gmail.com' ||
+         request.auth.token.email == 'admin@sbsvision.tn' ||
+         ('role' in request.auth.token &&
+          (request.auth.token.role == 'staff' || request.auth.token.role == 'admin')) ||
+         firestore.exists(/databases/(default)/documents/admins/$(request.auth.uid)) ||
+         firestore.exists(/databases/(default)/documents/staff/$(request.auth.uid)));
+    }
+
+    // Generated commercial quotes are private documents managed by staff only.
+    match /quotes/{fileName} {
+      allow read: if isStaff();
+      allow create, update: if isStaff() &&
+        request.resource.contentType == 'application/pdf';
+      allow delete: if isStaff();
+    }
+
+    // Quote attachments: max 10MB, safe mime types (images and PDFs only)
+    match /quoteAttachments/{quoteId}/{fileName} {
+      allow create: if request.resource.size < 10 * 1024 * 1024 &&
+        (request.resource.contentType.matches('image/.*') ||
+         request.resource.contentType == 'application/pdf');
+      allow read: if isStaff();
+      allow delete: if isStaff();
+    }
+
+    // Invoice attachments
+    match /invoiceAttachments/{requestId}/{fileName} {
+      allow create: if request.resource.size < 10 * 1024 * 1024 &&
+        (request.resource.contentType.matches('image/.*') ||
+         request.resource.contentType == 'application/pdf');
+      allow read: if isStaff();
+      allow delete: if isStaff();
+    }
+
+    // Default deny
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

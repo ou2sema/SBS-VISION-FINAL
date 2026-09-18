@@ -1,0 +1,102 @@
+{
+  "brand": {
+    "name": "SBS VISION",
+    "tagline": "Votre sécurité. Notre expertise.",
+    "subheadline": "Conception, installation et maintenance de systèmes de vidéosurveillance et de sécurité sur mesure en Tunisie.",
+    "phone": "+216 54 306 506"
+  },
+  "nav": {
+    "home": "Accueil",
+    "services": "Services",
+    "solutions": "Solutions",
+    "about": "À propos",
+    "contact": "Contact",
+    "requestQuote": "Demander un devis",
+    "requestInvoice": "Demande de facture",
+    "admin": "Espace Admin",
+    "callExpert": "Parler à un expert"
+  },
+  "common": {
+    "language": "Langue",
+    "french": "Français",
+    "arabic": "العربية",
+    "next": "Suivant",
+    "previous": "Précédent",
+    "submit": "Envoyer la demande",
+    "submitting": "Envoi en cours...",
+    "cancel": "Annuler",
+    "close": "Fermer",
+    "phone": "Téléphone",
+    "email": "Email",
+    "address": "Localisation",
+    "tunisia": "Tunisie",
+    "contactUs": "Contactez-nous",
+    "loading": "Chargement...",
+    "errorOccurred": "Une erreur est survenue. Veuillez réessayer.",
+    "learnMore": "En savoir plus",
+    "optional": "Optionnel",
+    "required": "Requis"
+  },
+  "services": {
+    "title": "Nos Services Spécialisés",
+    "subtitle": "Une gamme complète de solutions de sûreté électronique adaptées à vos exigences.",
+    "cctv": {
+      "title": "Vidéosurveillance",
+      "description": "Caméras haute définition, vision nocturne, enregistrement sécurisé et accès à distance sur smartphone."
+    },
+    "alarm": {
+      "title": "Systèmes d'Alarme",
+      "description": "Détection d'intrusion avancée, alertes instantanées et sirènes pour protéger vos locaux."
+    },
+    "access_control": {
+      "title": "Contrôle d'Accès",
+      "description": "Badges, biométrie, claviers codés et gestion rigoureuse des flux d'entrées et de sorties."
+    },
+    "intercom": {
+      "title": "Visiophonie & Sonnettes",
+      "description": "Interphones vidéo IP, portiers connectés et contrôle d'ouverture à distance pour tout bâtiment."
+    },
+    "networking": {
+      "title": "Réseaux & Câblage",
+      "description": "Infrastructures réseaux filaires et sans fil, switches PoE et baies de brassage dédiées."
+    },
+    "installation_maintenance": {
+      "title": "Installation & Maintenance",
+      "description": "Pose professionnelle aux normes, configuration sur mesure, contrats de maintenance et support technique réactif."
+    }
+  },
+  "solutions": {
+    "title": "Solutions par Environnement",
+    "subtitle": "Chaque espace a ses défis de sécurité propres. Nous concevons la réponse optimale.",
+    "house": "Maison",
+    "apartment": "Appartement",
+    "retail": "Commerce",
+    "office": "Bureau",
+    "enterprise": "Entreprise",
+    "warehouse": "Entrepôt",
+    "building": "Immeuble",
+    "other": "Autre environnement"
+  },
+  "quote": {
+    "badge": "Devis Gratuit & Étude Personnalisée",
+    "heroTitle": "Décrivez votre projet de sécurité",
+    "heroDesc": "Nos ingénieurs évaluent vos besoins et vous proposent une architecture technique adaptée sous 24 à 48h.",
+    "step1": "Service recherché",
+    "step2": "Votre environnement",
+    "step3": "Détails techniques",
+    "step4": "Équipements suggérés",
+    "step5": "Vos coordonnées",
+    "step6": "Récapitulatif",
+    "adviceOption": "« Je ne sais pas — conseillez-moi »",
+    "adviceDesc": "Vous n'avez pas besoin de choisir de matériel technique. Notre équipe vous recommandera la solution idéale.",
+    "letSbsChoose": "Je préfère que SBS VISION choisisse la solution adaptée"
+  },
+  "footer": {
+    "aboutText": "SBS VISION est votre partenaire tunisien de référence pour la sécurisation de résidences, bureaux, sites industriels et commerces.",
+    "quickLinks": "Liens Rapides",
+    "legal": "Mentions Légales",
+    "privacy": "Politique de confidentialité",
+    "rights": "Tous droits réservés.",
+    "bilingualNote": "Plateforme bilingue Français / Arabe conçue pour le marché tunisien."
+  }
+}

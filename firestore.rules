@@ -1,0 +1,89 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+
+    function isBootstrappedAdmin() {
+      return isAuthenticated() && (
+        request.auth.token.email == 'ou2sema@gmail.com' ||
+        request.auth.token.email == 'admin@sbsvision.tn'
+      );
+    }
+
+    function isAdmin() {
+      return isAuthenticated() && (
+        isBootstrappedAdmin() ||
+        exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
+        request.auth.token.role == 'admin'
+      );
+    }
+
+    function isStaff() {
+      return isAuthenticated() && (
+        isAdmin() ||
+        exists(/databases/$(database)/documents/staff/$(request.auth.uid)) ||
+        request.auth.token.role == 'staff'
+      );
+    }
+
+    // Admin profiles: store authenticated administrator status
+    match /admins/{adminId} {
+      allow read: if isAuthenticated() && (isAdmin() || request.auth.uid == adminId);
+      allow create, update: if isAuthenticated() && (
+        isAdmin() ||
+        (request.auth.uid == adminId && isBootstrappedAdmin())
+      );
+      allow delete: if isAdmin();
+    }
+
+    // Products: STRICTLY PRIVATE.
+    // Public browsers must NEVER query the internal product catalog directly.
+    // Only staff and admin can read or write internal products.
+    match /products/{productId} {
+      allow read: if isStaff();
+      allow write: if isAdmin();
+    }
+
+    // Quote Requests:
+    // Anyone can submit a quote request with valid structure.
+    // Only staff/admin can list or inspect all quote requests.
+    // Public users cannot read other users' quotes.
+    match /quoteRequests/{quoteId} {
+      allow create: if request.resource.data.customer.name is string &&
+                       request.resource.data.customer.phone is string;
+      allow read: if isStaff() || (isAuthenticated() && resource.data.customer.userId == request.auth.uid);
+      allow update: if isStaff();
+      allow delete: if isAdmin();
+    }
+
+    // Invoice Requests:
+    // Public can submit an invoice inquiry; only staff/admin can manage it.
+    match /invoiceRequests/{requestId} {
+      allow create: if request.resource.data.name is string &&
+                       request.resource.data.phone is string;
+      allow read, update: if isStaff();
+      allow delete: if isAdmin();
+    }
+
+    // Product Imports: Staff/Admin only
+    match /productImports/{importId} {
+      allow read, write: if isAdmin();
+    }
+
+    // Activity Audit Logs: Admin only, append-only
+    match /adminActivity/{activityId} {
+      allow read: if isAdmin();
+      allow create: if isStaff();
+      allow update, delete: if false; // Append-only
+    }
+
+    // Default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

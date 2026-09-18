@@ -1,0 +1,44 @@
+@import "tailwindcss";
+
+@theme {
+  --color-sbs-bg: #08090C;
+  --color-sbs-surface: #101318;
+  --color-sbs-surface-elevated: #161A22;
+  --color-sbs-surface-border: #232934;
+  --color-sbs-accent: #E11D2A;
+  --color-sbs-accent-hover: #F02836;
+  --color-sbs-accent-glow: rgba(225, 29, 42, 0.25);
+  --color-sbs-text-primary: #FFFFFF;
+  --color-sbs-text-muted: #9CA3AF;
+  --color-sbs-text-subtle: #6B7280;
+  --font-sans: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-arabic: 'Tajawal', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html[dir="rtl"] {
+  font-family: var(--font-arabic);
+}
+
+html[dir="ltr"] {
+  font-family: var(--font-sans);
+}
+
+/* Custom scrollbar matching Hikvision black & red aesthetic */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #08090C;
+}
+::-webkit-scrollbar-thumb {
+  background: #232934;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #E11D2A;
+}
