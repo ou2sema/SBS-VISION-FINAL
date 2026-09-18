@@ -1,0 +1,7 @@
+{
+  "name": "SBS VISION",
+  "description": "Solutions professionnelles de sécurité et vidéosurveillance en Tunisie. Devis sur mesure, installation et maintenance.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
