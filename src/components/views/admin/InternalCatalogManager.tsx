@@ -1,10 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Card } from '../../ui/Card';
 import { Badge } from '../../ui/Badge';
 import { Button } from '../../ui/Button';
 import { Input } from '../../ui/Input';
 import { InternalProduct } from '../../../types';
 import { INITIAL_INTERNAL_PRODUCTS } from '../../../lib/data/internalProducts';
+import {
+  getLocalInternalProducts,
+  importSscProducts,
+  saveInternalProduct,
+  subscribeToInternalProducts,
+} from '../../../lib/services/catalogService';
 import {
   Shield,
   Cpu,
@@ -18,7 +24,8 @@ import {
   AlertTriangle,
   X,
   SlidersHorizontal,
-  Package
+  Package,
+  RefreshCw,
 } from 'lucide-react';
 
 interface InternalCatalogManagerProps {
@@ -35,6 +42,10 @@ export function InternalCatalogManager({ locale }: InternalCatalogManagerProps) 
     }
     return INITIAL_INTERNAL_PRODUCTS;
   });
+  const [isImporting, setIsImporting] = useState(false);
+  const [catalogNotice, setCatalogNotice] = useState<string | null>(null);
+
+  useEffect(() => subscribeToInternalProducts(setProducts), []);
 
   const [search, setSearch] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
@@ -77,7 +88,7 @@ export function InternalCatalogManager({ locale }: InternalCatalogManagerProps) 
     return matchesCategory && matchesSearch;
   });
 
-  const handleAddProduct = (e: React.FormEvent) => {
+  const handleAddProduct = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newProduct.name || !newProduct.model) return;
 
@@ -105,11 +116,7 @@ export function InternalCatalogManager({ locale }: InternalCatalogManagerProps) 
 
     const updated = [created, ...products];
     setProducts(updated);
-    try {
-      localStorage.setItem('sbs_internal_products', JSON.stringify(updated));
-    } catch {
-      // ignore
-    }
+    await saveInternalProduct(created);
     setShowAddModal(false);
     setNewProduct({
       name: '',
@@ -125,6 +132,19 @@ export function InternalCatalogManager({ locale }: InternalCatalogManagerProps) 
       spec2Key: 'Vision nocturne',
       spec2Val: 'ColorVu 30m',
     });
+  };
+
+  const handleImportSsc = async () => {
+    setIsImporting(true);
+    setCatalogNotice(null);
+    const importedCount = await importSscProducts();
+    setProducts(getLocalInternalProducts());
+    setCatalogNotice(
+      locale === 'ar'
+        ? `تم استيراد ${importedCount} منتج من SSC.TN.`
+        : `${importedCount} références SSC.TN importées dans le catalogue.`
+    );
+    setIsImporting(false);
   };
 
   return (
@@ -156,7 +176,23 @@ export function InternalCatalogManager({ locale }: InternalCatalogManagerProps) 
         >
           {locale === 'ar' ? 'إضافة جهاز جديد' : 'Ajouter un équipement'}
         </Button>
+        <Button
+          variant="secondary"
+          size="sm"
+          onClick={handleImportSsc}
+          disabled={isImporting}
+          leftIcon={<RefreshCw className={`w-4 h-4 ${isImporting ? 'animate-spin' : ''}`} />}
+          className="shrink-0"
+        >
+          {isImporting ? 'Import en cours...' : 'Importer SSC.TN'}
+        </Button>
       </div>
+
+      {catalogNotice && (
+        <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-semibold">
+          {catalogNotice}
+        </div>
+      )}
 
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row gap-3 items-center justify-between">

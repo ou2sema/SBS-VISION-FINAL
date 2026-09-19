@@ -1,6 +1,7 @@
-import React, { useState, useMemo } from 'react';
-import { QuoteRequest, DevisData, DevisItem } from '../../../types';
+import React, { useState, useMemo, useEffect } from 'react';
+import { QuoteRequest, DevisData, DevisItem, InternalProduct } from '../../../types';
 import { INITIAL_INTERNAL_PRODUCTS } from '../../../lib/data/internalProducts';
+import { getLocalInternalProducts } from '../../../lib/services/catalogService';
 import {
   downloadDevisPDF,
   uploadDevisPDF,
@@ -72,12 +73,17 @@ export function DevisGeneratorModal({
   const [notes, setNotes] = useState(
     quote?.project?.description ? `Spécifications client : ${quote.project.description}` : ''
   );
+  const [catalogProducts, setCatalogProducts] = useState<InternalProduct[]>(() => getLocalInternalProducts());
+
+  useEffect(() => {
+    if (isOpen) setCatalogProducts(getLocalInternalProducts());
+  }, [isOpen]);
 
   // Initial Line Items derived from quote or default Dahua / Hikvision kit
   const [items, setItems] = useState<DevisItem[]>(() => {
     if (quote?.selectedProducts && quote.selectedProducts.length > 0) {
       return quote.selectedProducts.map((p, idx) => {
-        const catalogMatch = INITIAL_INTERNAL_PRODUCTS.find((cp) => cp.id === p.productId);
+        const catalogMatch = catalogProducts.find((cp) => cp.id === p.productId);
         const price = catalogMatch?.internalSellingPrice || 350;
         return {
           id: `item-${idx + 1}`,
@@ -260,7 +266,7 @@ export function DevisGeneratorModal({
 
   const handleAddCatalogProduct = () => {
     if (!selectedCatalogId) return;
-    const prod = INITIAL_INTERNAL_PRODUCTS.find((p) => p.id === selectedCatalogId);
+    const prod = catalogProducts.find((p) => p.id === selectedCatalogId);
     if (!prod) return;
 
     const newItem: DevisItem = {
@@ -576,7 +582,7 @@ export function DevisGeneratorModal({
                 className="bg-[#08090C] border border-[#232934] rounded-lg px-3 py-1.5 text-xs text-[#FFFFFF] focus:border-[#E11D2A] focus:outline-none max-w-xs"
               >
                 <option value="">-- Insérer un produit Dahua / Hikvision --</option>
-                {INITIAL_INTERNAL_PRODUCTS.map((p) => (
+                {catalogProducts.filter((p) => p.active && p.lifecycleStatus === 'ACTIVE').map((p) => (
                   <option key={p.id} value={p.id}>
                     [{p.brand}] {p.name} ({p.internalSellingPrice} DT)
                   </option>
