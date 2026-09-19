@@ -74,11 +74,11 @@ export function Header({ onNavigate, activeView = 'home' }: HeaderProps) {
             {/* Business Phone CTA */}
             <a
               href="tel:+21654306506"
-              className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#101318] border border-[#232934] text-[#FFFFFF] text-sm font-semibold hover:border-[#E11D2A]/60 transition-all group"
+              className="flex items-center gap-2 px-3.5 py-2 rounded-lg bg-[#101318] border border-[#232934] text-[#FFFFFF] text-sm font-semibold hover:border-[#E11D2A]/60 transition-all group whitespace-nowrap"
               dir="ltr"
             >
               <Phone className="w-4 h-4 text-[#E11D2A] group-hover:scale-110 transition-transform" />
-              <span className="font-mono tracking-tight text-xs lg:text-sm">+216 54 306 506</span>
+              <span className="font-mono tracking-tight text-[11px] lg:text-sm whitespace-nowrap">+216 54 306 506</span>
             </a>
 
             {/* Language Switcher */}
@@ -171,7 +171,7 @@ export function Header({ onNavigate, activeView = 'home' }: HeaderProps) {
 
       {invoiceHelpOpen && (
         <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
-          <div className="w-full max-w-lg rounded-2xl bg-[#101318] border border-[#232934] p-6 shadow-2xl space-y-5">
+          <div className="w-full max-w-lg max-h-[90vh] overflow-y-auto rounded-2xl bg-[#101318] border border-[#232934] p-4 sm:p-6 shadow-2xl space-y-5">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <div className="flex items-center gap-2 text-[#E11D2A] text-xs font-bold uppercase tracking-wider">
@@ -199,7 +199,7 @@ export function Header({ onNavigate, activeView = 'home' }: HeaderProps) {
             </p>
 
             <div className="rounded-xl border border-[#232934] bg-[#08090C] p-3 space-y-3">
-              <div className="max-h-[52vh] overflow-y-auto rounded-lg bg-[#d9dde3]">
+              <div className="max-h-[48vh] overflow-y-auto rounded-lg bg-[#d9dde3]">
                 <img
                   src={invoicePreview}
                   alt="Exemple complet de devis avec numero de devis mis en evidence"
