@@ -138,15 +138,6 @@ export function Footer({ onNavigate }: FooterProps) {
                   {t('footer.privacy')}
                 </button>
               </li>
-              <li>
-                <button
-                  type="button"
-                  onClick={() => onNavigate?.('admin')}
-                  className="hover:text-[#FFFFFF] transition-colors text-xs text-[#6B7280]"
-                >
-                  {t('nav.admin')}
-                </button>
-              </li>
             </ul>
           </div>
 

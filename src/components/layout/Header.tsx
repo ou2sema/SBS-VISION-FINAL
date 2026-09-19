@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useI18n } from '../../i18n/context';
-import { Phone, Menu, X, ChevronRight, FileText, Shield } from 'lucide-react';
+import { Phone, Menu, X, ChevronRight, FileText } from 'lucide-react';
 import { LanguageSwitcher } from '../ui/LanguageSwitcher';
 import { Button } from '../ui/Button';
 import { Logo } from '../ui/Logo';
@@ -22,7 +22,6 @@ export function Header({ onNavigate, activeView = 'home' }: HeaderProps) {
     { id: 'solutions', label: t('nav.solutions') },
     { id: 'about', label: t('nav.about') },
     { id: 'contact', label: t('nav.contact') },
-    { id: 'admin', label: t('nav.admin'), isAdmin: true },
   ];
 
   const handleNavClick = (viewId: string) => {
@@ -62,16 +61,10 @@ export function Header({ onNavigate, activeView = 'home' }: HeaderProps) {
                 className={`px-3.5 py-2 rounded-lg text-sm font-medium transition-all duration-150 cursor-pointer inline-flex items-center gap-1.5 ${
                   activeView === item.id
                     ? 'text-[#E11D2A] bg-[#101318] border border-[#232934] font-semibold'
-                    : item.isAdmin
-                    ? 'text-[#FFFFFF] bg-[#161A22] border border-[#232934] hover:border-[#E11D2A]/60 font-semibold'
                     : 'text-[#9CA3AF] hover:text-[#FFFFFF] hover:bg-[#101318]'
                 }`}
               >
-                {item.isAdmin && <Shield className="w-3.5 h-3.5 text-[#E11D2A]" />}
                 <span>{item.label}</span>
-                {item.isAdmin && (
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#E11D2A] animate-pulse" />
-                )}
               </button>
             ))}
           </nav>
@@ -135,22 +128,12 @@ export function Header({ onNavigate, activeView = 'home' }: HeaderProps) {
                 type="button"
                 onClick={() => handleNavClick(item.id)}
                 className={`w-full text-start px-3.5 py-3 rounded-lg text-sm font-medium flex items-center justify-between ${
-                  activeView === item.id
-                    ? 'text-[#E11D2A] bg-[#101318] font-semibold border border-[#232934]'
-                    : item.isAdmin
-                    ? 'text-[#FFFFFF] bg-[#161A22] border border-[#232934]'
-                    : 'text-[#9CA3AF] hover:text-[#FFFFFF] hover:bg-[#101318]'
+                    activeView === item.id
+                      ? 'text-[#E11D2A] bg-[#101318] font-semibold border border-[#232934]'
+                      : 'text-[#9CA3AF] hover:text-[#FFFFFF] hover:bg-[#101318]'
                 }`}
               >
-                <div className="flex items-center gap-2">
-                  {item.isAdmin && <Shield className="w-4 h-4 text-[#E11D2A]" />}
-                  <span>{item.label}</span>
-                </div>
-                {item.isAdmin && (
-                  <span className="text-[10px] uppercase font-bold text-[#E11D2A] bg-[#E11D2A]/10 px-2 py-0.5 rounded border border-[#E11D2A]/20">
-                    Staff
-                  </span>
-                )}
+                <span>{item.label}</span>
               </button>
             ))}
           </div>

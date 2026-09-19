@@ -15,7 +15,12 @@ import { initFirebaseEmulators } from './lib/firebase/emulators';
 import { getFirebaseAnalytics } from './lib/firebase/config';
 
 function MainApp() {
-  const [activeView, setActiveView] = useState<string>('home');
+  const [activeView, setActiveView] = useState<string>(() => {
+    if (typeof window !== 'undefined' && window.location.pathname.replace(/\/$/, '') === '/admin') {
+      return 'admin';
+    }
+    return 'home';
+  });
 
   useEffect(() => {
     // Check if emulator flag is set
