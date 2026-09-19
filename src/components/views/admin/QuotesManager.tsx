@@ -25,6 +25,7 @@ import {
   X,
   FileText,
   Download,
+  ArrowRight,
 } from 'lucide-react';
 
 interface QuotesManagerProps {
@@ -78,9 +79,21 @@ export function QuotesManager({ quotes, onUpdateQuote, locale }: QuotesManagerPr
     { value: 'ASSESSMENT', labelFr: 'Visite / Audit sur Site', labelAr: 'معاينة الموقع', color: 'bg-blue-500/15 text-blue-400 border-blue-500/30' },
     { value: 'QUOTATION_PREPARATION', labelFr: 'Chiffrage en cours', labelAr: 'إعداد التسعير', color: 'bg-purple-500/15 text-purple-400 border-purple-500/30' },
     { value: 'QUOTED', labelFr: 'Devis Transmis au Client', labelAr: 'تم إرسال العرض', color: 'bg-indigo-500/15 text-indigo-400 border-indigo-500/30' },
-    { value: 'WON', labelFr: 'Projet Validé & Installé', labelAr: 'مشروع منجز بنجاح', color: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' },
+    { value: 'WON', labelFr: 'Tâche clôturée', labelAr: 'تم إغلاق المهمة', color: 'bg-emerald-500/15 text-emerald-400 border-emerald-500/30' },
     { value: 'LOST', labelFr: 'Sans Suite / Annulé', labelAr: 'ملغى أو مؤجل', color: 'bg-zinc-700/30 text-zinc-400 border-zinc-600/30' },
   ];
+
+  const workflowStatuses = statusOptions.filter((option) => option.value !== 'LOST');
+
+  const getNextWorkflowStatus = (status: QuoteStatus): QuoteStatus | null => {
+    const index = workflowStatuses.findIndex((option) => option.value === status);
+    return index >= 0 && index < workflowStatuses.length - 1 ? workflowStatuses[index + 1].value : null;
+  };
+
+  const getWorkflowStep = (status: QuoteStatus) => {
+    const index = workflowStatuses.findIndex((option) => option.value === status);
+    return index >= 0 ? index : 0;
+  };
 
   const getStatusBadge = (status: QuoteStatus) => {
     const opt = statusOptions.find((s) => s.value === status) || statusOptions[0];
@@ -145,6 +158,26 @@ export function QuotesManager({ quotes, onUpdateQuote, locale }: QuotesManagerPr
       setTimeout(() => setSaveSuccess(false), 2500);
     } catch (err) {
       console.error(err);
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  const handleAdvanceWorkflow = async () => {
+    if (!selectedQuote) return;
+    const nextStatus = getNextWorkflowStatus(editStatus);
+    if (!nextStatus) return;
+    setEditStatus(nextStatus);
+    setIsSaving(true);
+    try {
+      await onUpdateQuote(selectedQuote.id, nextStatus, editInternalNotes, editAssignedTo);
+      setSelectedQuote({
+        ...selectedQuote,
+        status: nextStatus,
+        updatedAt: new Date().toISOString(),
+      });
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 2500);
     } finally {
       setIsSaving(false);
     }
@@ -444,9 +477,31 @@ export function QuotesManager({ quotes, onUpdateQuote, locale }: QuotesManagerPr
             {/* Status & Technician Management Controls */}
             <div className="p-5 rounded-xl bg-[#161A22] border border-[#232934] space-y-4">
               <h4 className="text-xs font-bold text-[#E11D2A] uppercase tracking-wider flex items-center gap-1.5">
-                <SlidersHorizontal className="w-3.5 h-3.5" />
+                <ArrowRight className="w-3.5 h-3.5" />
                 {locale === 'ar' ? 'إدارة حالة الملف والتكليف الداخلي' : 'Suivi Opérationnel & Affectation'}
               </h4>
+
+              <div className="grid grid-cols-2 sm:grid-cols-6 gap-1.5">
+                {workflowStatuses.map((option, index) => {
+                  const isCurrent = index === getWorkflowStep(editStatus);
+                  const isComplete = index < getWorkflowStep(editStatus);
+                  return (
+                    <div
+                      key={option.value}
+                      className={`rounded-lg border px-2 py-2 text-center text-[10px] font-semibold ${
+                        isCurrent
+                          ? 'border-[#E11D2A] bg-[#E11D2A]/15 text-[#FF4D5A]'
+                          : isComplete
+                            ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400'
+                            : 'border-[#232934] bg-[#08090C] text-[#6B7280]'
+                      }`}
+                    >
+                      <span className="block font-mono mb-1">{index + 1}</span>
+                      {locale === 'ar' ? option.labelAr : option.labelFr}
+                    </div>
+                  );
+                })}
+              </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-1.5">
@@ -504,6 +559,17 @@ export function QuotesManager({ quotes, onUpdateQuote, locale }: QuotesManagerPr
                 </div>
 
                 <div className="flex items-center gap-3">
+                  {getNextWorkflowStatus(editStatus) && (
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={handleAdvanceWorkflow}
+                      disabled={isSaving}
+                      rightIcon={<ArrowRight className="w-3.5 h-3.5" />}
+                    >
+                      {locale === 'ar' ? 'المرحلة التالية' : 'Étape suivante'}
+                    </Button>
+                  )}
                   <Button variant="secondary" size="sm" onClick={() => setSelectedQuote(null)}>
                     {locale === 'ar' ? 'إغلاق' : 'Fermer'}
                   </Button>
