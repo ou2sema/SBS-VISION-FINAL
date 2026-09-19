@@ -36,7 +36,12 @@ export function InvoiceView() {
         phone: formData.phone.trim(),
         email: formData.email.trim() || undefined,
         invoiceNumber: formData.invoiceNumber.trim() || undefined,
-        requestType: formData.requestType.toUpperCase() as InvoiceRequestType,
+        requestType: {
+          copy: 'COPY',
+          correction: 'MODIFICATION',
+          statement: 'ATTESTATION',
+          other: 'OTHER',
+        }[formData.requestType] as InvoiceRequestType,
         notes: formData.message.trim() || undefined,
       });
       setSubmitted(true);

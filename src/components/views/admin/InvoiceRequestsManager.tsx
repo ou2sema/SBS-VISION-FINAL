@@ -20,7 +20,18 @@ export function InvoiceRequestsManager({ locale }: InvoiceRequestsManagerProps) 
   useEffect(() => {
     return subscribeToInvoiceRequests(
       setRequests,
-      () => setLoadError(locale === 'ar' ? 'تعذر تحميل الطلبات' : 'Impossible de charger les demandes de factures.')
+      (error) => {
+        const permissionDenied = error.message.includes('permission-denied');
+        setLoadError(
+          permissionDenied
+            ? locale === 'ar'
+              ? 'الوصول مرفوض. سجّل الدخول بحساب Firebase مسؤول أو موظف، وليس بحساب العرض المحلي.'
+              : 'Accès refusé. Connectez-vous avec un compte Firebase admin/staff, pas avec la session démo locale.'
+            : locale === 'ar'
+              ? 'تعذر تحميل الطلبات. تحقق من اتصال Firebase.'
+              : 'Impossible de charger les demandes. Vérifiez la connexion Firebase.'
+        );
+      }
     );
   }, [locale]);
 
@@ -127,7 +138,9 @@ export function InvoiceRequestsManager({ locale }: InvoiceRequestsManagerProps) 
         ))}
         {!loadError && filtered.length === 0 && (
           <Card className="p-8 text-center text-sm text-[#9CA3AF]">
-            {locale === 'ar' ? 'لا توجد طلبات فواتير' : 'Aucune demande de facture enregistrée.'}
+            {locale === 'ar'
+              ? 'لا توجد طلبات فواتير بعد. أرسل طلباً من نموذج الفواتير لاختبار المسار.'
+              : 'Aucune demande de facture. Envoyez-en une depuis le formulaire public pour tester le parcours.'}
           </Card>
         )}
       </div>
