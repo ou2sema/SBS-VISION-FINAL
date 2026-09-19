@@ -6,6 +6,7 @@ import { Input } from '../ui/Input';
 import { Textarea } from '../ui/Textarea';
 import { Badge } from '../ui/Badge';
 import { FileText, CheckCircle2 } from 'lucide-react';
+import { createInvoiceRequest, type InvoiceRequestType } from '../../lib/services/invoiceRequestsService';
 
 export function InvoiceView() {
   const { t, locale } = useI18n();
@@ -20,10 +21,35 @@ export function InvoiceView() {
     message: '',
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [submitError, setSubmitError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.phone) return;
-    setSubmitted(true);
+    setIsSubmitting(true);
+    setSubmitError(null);
+    try {
+      await createInvoiceRequest({
+        name: formData.name.trim(),
+        company: formData.company.trim() || undefined,
+        phone: formData.phone.trim(),
+        email: formData.email.trim() || undefined,
+        invoiceNumber: formData.invoiceNumber.trim() || undefined,
+        requestType: formData.requestType.toUpperCase() as InvoiceRequestType,
+        notes: formData.message.trim() || undefined,
+      });
+      setSubmitted(true);
+    } catch (error) {
+      console.error('Could not submit invoice request:', error);
+      setSubmitError(
+        locale === 'ar'
+          ? 'تعذر إرسال الطلب. يرجى المحاولة مرة أخرى.'
+          : 'Impossible d’envoyer la demande. Vérifiez votre connexion puis réessayez.'
+      );
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -65,6 +91,11 @@ export function InvoiceView() {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
+            {submitError && (
+              <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-400">
+                {submitError}
+              </div>
+            )}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
                 label={locale === 'ar' ? 'الاسم واللقب *' : 'Nom du contact *'}
@@ -134,8 +165,8 @@ export function InvoiceView() {
               rows={3}
             />
 
-            <Button variant="primary" size="md" className="w-full" type="submit">
-              {t('common.submit')}
+            <Button variant="primary" size="md" className="w-full" type="submit" disabled={isSubmitting}>
+              {isSubmitting ? (locale === 'ar' ? 'جارٍ الإرسال...' : 'Envoi en cours...') : t('common.submit')}
             </Button>
           </form>
         )}

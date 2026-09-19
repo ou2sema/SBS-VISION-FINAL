@@ -3,79 +3,38 @@ import { Card } from '../../ui/Card';
 import { Badge } from '../../ui/Badge';
 import { Button } from '../../ui/Button';
 import { FileText, Calendar, Phone, Mail, CheckCircle2, Clock, Search } from 'lucide-react';
-
-interface InvoiceRequest {
-  id: string;
-  name: string;
-  email?: string;
-  phone: string;
-  invoiceNumber?: string;
-  requestType: 'COPY' | 'MODIFICATION' | 'ATTESTATION' | 'OTHER';
-  notes?: string;
-  status: 'PENDING' | 'PROCESSED';
-  createdAt: string;
-}
-
-const DEMO_INVOICE_REQUESTS: InvoiceRequest[] = [
-  {
-    id: 'inv-req-1',
-    name: 'Société Carthage Distribution',
-    email: 'compta@carthage-distrib.tn',
-    phone: '+216 71 889 001',
-    invoiceNumber: 'FAC-2026-0042',
-    requestType: 'COPY',
-    notes: 'Besoin d\'un duplicata tamponné pour la clôture du bilan comptable.',
-    status: 'PENDING',
-    createdAt: new Date(Date.now() - 3600000 * 24).toISOString(),
-  },
-  {
-    id: 'inv-req-2',
-    name: 'Clinique Internationale El Manar',
-    email: 'admin@clinique-elmanar.tn',
-    phone: '+216 71 500 220',
-    invoiceNumber: 'FAC-2025-0198',
-    requestType: 'ATTESTATION',
-    notes: 'Attestation de garantie décennale et conformité des caméras dômes.',
-    status: 'PROCESSED',
-    createdAt: new Date(Date.now() - 3600000 * 72).toISOString(),
-  },
-];
+import {
+  subscribeToInvoiceRequests,
+  updateInvoiceRequestStatus,
+  type InvoiceRequest,
+} from '../../../lib/services/invoiceRequestsService';
 
 interface InvoiceRequestsManagerProps {
   locale: string;
 }
 
 export function InvoiceRequestsManager({ locale }: InvoiceRequestsManagerProps) {
-  const [requests, setRequests] = useState<InvoiceRequest[]>(() => {
-    try {
-      const saved = localStorage.getItem('sbs_invoice_requests');
-      if (saved) {
-        const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
-      }
-    } catch {
-      // ignore
-    }
-    return DEMO_INVOICE_REQUESTS;
-  });
+  const [requests, setRequests] = useState<InvoiceRequest[]>([]);
+  const [loadError, setLoadError] = useState<string | null>(null);
+
+  useEffect(() => {
+    return subscribeToInvoiceRequests(
+      setRequests,
+      () => setLoadError(locale === 'ar' ? 'تعذر تحميل الطلبات' : 'Impossible de charger les demandes de factures.')
+    );
+  }, [locale]);
 
   const [search, setSearch] = useState('');
 
-  const toggleStatus = (id: string) => {
-    const updated = requests.map((r) => {
-      if (r.id === id) {
-        return {
-          ...r,
-          status: r.status === 'PENDING' ? ('PROCESSED' as const) : ('PENDING' as const),
-        };
-      }
-      return r;
-    });
-    setRequests(updated);
+  const toggleStatus = async (id: string) => {
+    const request = requests.find((item) => item.id === id);
+    if (!request) return;
+    const status = request.status === 'PENDING' ? 'PROCESSED' : 'PENDING';
     try {
-      localStorage.setItem('sbs_invoice_requests', JSON.stringify(updated));
-    } catch {
-      // ignore
+      await updateInvoiceRequestStatus(id, status);
+    } catch (error) {
+      console.error('Could not update invoice request:', error);
+      setLoadError(locale === 'ar' ? 'تعذر تحديث الطلب' : 'Impossible de mettre à jour la demande.');
     }
   };
 
@@ -110,6 +69,11 @@ export function InvoiceRequestsManager({ locale }: InvoiceRequestsManagerProps) 
       </div>
 
       <div className="space-y-3">
+        {loadError && (
+          <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-400">
+            {loadError}
+          </div>
+        )}
         {filtered.map((req) => (
           <Card key={req.id} className="p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="space-y-1.5 flex-1">
@@ -161,6 +125,11 @@ export function InvoiceRequestsManager({ locale }: InvoiceRequestsManagerProps) 
             </Button>
           </Card>
         ))}
+        {!loadError && filtered.length === 0 && (
+          <Card className="p-8 text-center text-sm text-[#9CA3AF]">
+            {locale === 'ar' ? 'لا توجد طلبات فواتير' : 'Aucune demande de facture enregistrée.'}
+          </Card>
+        )}
       </div>
     </div>
   );
