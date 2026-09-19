@@ -2,6 +2,7 @@ import {
   addDoc,
   collection,
   doc,
+  getDoc,
   onSnapshot,
   orderBy,
   query,
@@ -11,6 +12,7 @@ import { getFirebaseFirestore } from '../firebase/config';
 
 export type InvoiceRequestStatus = 'PENDING' | 'PROCESSED';
 export type InvoiceRequestType = 'COPY' | 'MODIFICATION' | 'ATTESTATION' | 'OTHER';
+export type QuoteEligibility = 'VALID' | 'IN_PROGRESS' | 'CANCELLED' | 'NOT_FOUND';
 
 export interface InvoiceRequest {
   id: string;
@@ -46,6 +48,23 @@ export async function createInvoiceRequest(request: NewInvoiceRequest): Promise<
     createdAt,
   });
   return document.id;
+}
+
+export async function checkQuoteEligibility(quoteNumber: string): Promise<QuoteEligibility> {
+  const normalized = quoteNumber.trim().toUpperCase();
+  if (!normalized) return 'NOT_FOUND';
+
+  try {
+    const snapshot = await getDoc(doc(getFirebaseFirestore(), 'quoteRequests', normalized));
+    if (!snapshot.exists()) return 'NOT_FOUND';
+    const status = snapshot.data().status;
+    if (status === 'LOST') return 'CANCELLED';
+    if (status === 'QUOTED' || status === 'WON') return 'VALID';
+    return 'IN_PROGRESS';
+  } catch (error) {
+    console.warn('Could not validate quote reference:', error);
+    return 'NOT_FOUND';
+  }
 }
 
 export function subscribeToInvoiceRequests(

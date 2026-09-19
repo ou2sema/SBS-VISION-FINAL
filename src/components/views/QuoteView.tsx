@@ -25,7 +25,7 @@ import {
 } from 'lucide-react';
 import type { ServiceType, PropertyEnvironment } from '../../types';
 import { getFirebaseFirestore, getFirebaseAuth } from '../../lib/firebase/config';
-import { collection, addDoc } from 'firebase/firestore';
+import { doc, setDoc } from 'firebase/firestore';
 import { signInAnonymously } from 'firebase/auth';
 
 interface QuoteViewProps {
@@ -146,7 +146,7 @@ export function QuoteView({ onNavigate }: QuoteViewProps) {
         await signInAnonymously(auth).catch(() => null);
       }
       const db = getFirebaseFirestore();
-      await addDoc(collection(db, 'quoteRequests'), quotePayload);
+      await setDoc(doc(db, 'quoteRequests', generatedId), quotePayload);
     } catch (e) {
       console.warn('Firestore cloud sync notice:', e);
     } finally {

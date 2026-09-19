@@ -55,7 +55,9 @@ service cloud.firestore {
     match /quoteRequests/{quoteId} {
       allow create: if request.resource.data.customer.name is string &&
                        request.resource.data.customer.phone is string;
-      allow read: if isStaff() || (isAuthenticated() && resource.data.customer.userId == request.auth.uid);
+      allow read: if isStaff() ||
+        (isAuthenticated() && resource.data.customer.userId == request.auth.uid) ||
+        (resource.data.referenceId == resource.id);
       allow update: if isStaff();
       allow delete: if isAdmin();
     }

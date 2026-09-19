@@ -6,7 +6,11 @@ import { Input } from '../ui/Input';
 import { Textarea } from '../ui/Textarea';
 import { Badge } from '../ui/Badge';
 import { FileText, CheckCircle2 } from 'lucide-react';
-import { createInvoiceRequest, type InvoiceRequestType } from '../../lib/services/invoiceRequestsService';
+import {
+  checkQuoteEligibility,
+  createInvoiceRequest,
+  type InvoiceRequestType,
+} from '../../lib/services/invoiceRequestsService';
 
 export function InvoiceView() {
   const { t, locale } = useI18n();
@@ -23,13 +27,42 @@ export function InvoiceView() {
 
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [quoteStatusMessage, setQuoteStatusMessage] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.phone) return;
     setIsSubmitting(true);
     setSubmitError(null);
+    setQuoteStatusMessage(null);
     try {
+      if (!formData.invoiceNumber.trim()) {
+        setQuoteStatusMessage(
+          locale === 'ar'
+            ? 'رقم عرض السعر مطلوب لإرسال طلب الفاتورة.'
+            : 'Le numéro du devis est obligatoire pour demander une facture.'
+        );
+        return;
+      }
+
+      const quoteEligibility = await checkQuoteEligibility(formData.invoiceNumber);
+      if (quoteEligibility !== 'VALID') {
+        setQuoteStatusMessage(
+          quoteEligibility === 'CANCELLED'
+            ? locale === 'ar'
+              ? 'هذا العرض ملغى ولا يمكن إصدار فاتورة له.'
+              : 'Ce devis est annulé. Une facture ne peut pas être demandée.'
+            : quoteEligibility === 'IN_PROGRESS'
+              ? locale === 'ar'
+                ? 'هذا العرض مازال قيد المعالجة. انتظر إرساله أو إغلاقه قبل طلب الفاتورة.'
+                : 'Ce devis est encore en cours de traitement. Attendez sa transmission ou sa clôture avant de demander la facture.'
+              : locale === 'ar'
+                ? 'رقم عرض السعر غير موجود. تحقق من المرجع indiqué sur votre devis.'
+                : 'Numéro de devis introuvable. Vérifiez la référence indiquée sur votre devis.'
+        );
+        return;
+      }
+
       await createInvoiceRequest({
         name: formData.name.trim(),
         company: formData.company.trim() || undefined,
@@ -96,6 +129,11 @@ export function InvoiceView() {
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4">
+            {quoteStatusMessage && (
+              <div className="p-3 rounded-lg bg-amber-500/10 border border-amber-500/30 text-xs text-amber-300">
+                {quoteStatusMessage}
+              </div>
+            )}
             {submitError && (
               <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-400">
                 {submitError}
@@ -139,9 +177,10 @@ export function InvoiceView() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <Input
                 label={locale === 'ar' ? 'رقم الفاتورة أو مرجع المشروع' : 'Numéro de facture ou référence devis'}
-                placeholder={locale === 'ar' ? 'مثال: FAC-2026-0123' : 'Ex : FAC-2026-0123'}
+                placeholder={locale === 'ar' ? 'مثال: SBS-2026-5434' : 'Ex : SBS-2026-5434'}
                 value={formData.invoiceNumber}
                 onChange={(e) => setFormData({ ...formData, invoiceNumber: e.target.value })}
+                required
                 dir="ltr"
               />
 
