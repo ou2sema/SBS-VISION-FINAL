@@ -232,6 +232,16 @@ export function InternalCatalogManager({ locale }: InternalCatalogManagerProps) 
           return (
             <Card key={prod.id} hoverable className="p-5 flex flex-col justify-between space-y-4">
               <div className="space-y-3">
+                {prod.images?.[0] && (
+                  <div className="h-32 rounded-lg bg-white border border-[#232934] overflow-hidden flex items-center justify-center">
+                    <img
+                      src={prod.images[0]}
+                      alt={prod.name}
+                      className="h-full w-full object-contain"
+                      loading="lazy"
+                    />
+                  </div>
+                )}
                 <div className="flex items-center justify-between">
                   <span className="text-[10px] font-mono uppercase px-2 py-0.5 rounded bg-[#08090C] text-[#9CA3AF] border border-[#232934]">
                     {prod.subcategory || prod.category}
