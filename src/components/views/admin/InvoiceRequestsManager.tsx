@@ -2,12 +2,14 @@ import { useState, useEffect } from 'react';
 import { Card } from '../../ui/Card';
 import { Badge } from '../../ui/Badge';
 import { Button } from '../../ui/Button';
-import { FileText, Calendar, Phone, Mail, CheckCircle2, Clock, Search } from 'lucide-react';
+import { FileText, Calendar, Phone, Mail, CheckCircle2, Clock, Search, Copy } from 'lucide-react';
 import {
+  getQuoteForInvoice,
   subscribeToInvoiceRequests,
   updateInvoiceRequestStatus,
   type InvoiceRequest,
 } from '../../../lib/services/invoiceRequestsService';
+import { uploadFacturePDF } from '../../../lib/services/pdfService';
 
 interface InvoiceRequestsManagerProps {
   locale: string;
@@ -36,6 +38,7 @@ export function InvoiceRequestsManager({ locale }: InvoiceRequestsManagerProps) 
   }, [locale]);
 
   const [search, setSearch] = useState('');
+  const [generatingId, setGeneratingId] = useState<string | null>(null);
 
   const toggleStatus = async (id: string) => {
     const request = requests.find((item) => item.id === id);
@@ -49,6 +52,31 @@ export function InvoiceRequestsManager({ locale }: InvoiceRequestsManagerProps) 
     }
   };
 
+  const handleGenerateInvoice = async (request: InvoiceRequest) => {
+    setGeneratingId(request.id);
+    setLoadError(null);
+    try {
+      if (request.invoice?.downloadUrl) {
+        window.open(request.invoice.downloadUrl, '_blank', 'noopener,noreferrer');
+        return;
+      }
+
+      const quoteNumber = request.quoteNumber || request.invoiceNumber || '';
+      const quote = await getQuoteForInvoice(quoteNumber);
+      if (!quote?.devis) {
+        throw new Error('Le devis doit être généré avant de créer la facture.');
+      }
+
+      const result = await uploadFacturePDF(request.id, quote.devis);
+      window.open(result.downloadUrl, '_blank', 'noopener,noreferrer');
+    } catch (error) {
+      console.error('Could not generate invoice:', error);
+      setLoadError(error instanceof Error ? error.message : 'Impossible de générer la facture.');
+    } finally {
+      setGeneratingId(null);
+    }
+  };
+
   const filtered = requests.filter((r) => {
     if (!r) return false;
     const s = (search || '').toLowerCase().trim();
@@ -56,7 +84,8 @@ export function InvoiceRequestsManager({ locale }: InvoiceRequestsManagerProps) 
     return (
       String(r.name || '').toLowerCase().includes(s) ||
       String(r.phone || '').includes(s) ||
-      (Boolean(r.invoiceNumber) && String(r.invoiceNumber).toLowerCase().includes(s))
+      (Boolean(r.quoteNumber || r.invoiceNumber) &&
+        String(r.quoteNumber || r.invoiceNumber).toLowerCase().includes(s))
     );
   });
 
@@ -90,7 +119,7 @@ export function InvoiceRequestsManager({ locale }: InvoiceRequestsManagerProps) 
             <div className="space-y-1.5 flex-1">
               <div className="flex items-center gap-2">
                 <span className="text-xs font-mono font-bold text-[#E11D2A] bg-[#E11D2A]/10 px-2 py-0.5 rounded border border-[#E11D2A]/20">
-                  {req.invoiceNumber || 'Facture non spécifiée'}
+                  {req.quoteNumber || req.invoiceNumber || 'Référence devis non spécifiée'}
                 </span>
                 <h4 className="text-sm font-bold text-[#FFFFFF]">{req.name}</h4>
                 <Badge variant={req.status === 'PROCESSED' ? 'neutral' : 'accent'} className="text-[10px]">
@@ -123,6 +152,21 @@ export function InvoiceRequestsManager({ locale }: InvoiceRequestsManagerProps) 
                 </p>
               )}
             </div>
+
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => handleGenerateInvoice(req)}
+              disabled={generatingId === req.id}
+              className="shrink-0 text-xs"
+              leftIcon={req.invoice?.downloadUrl ? <Copy className="w-3.5 h-3.5" /> : <FileText className="w-3.5 h-3.5" />}
+            >
+              {generatingId === req.id
+                ? 'Génération...'
+                : req.invoice?.downloadUrl
+                  ? 'Générer un duplicata'
+                  : 'Générer une facture'}
+            </Button>
 
             <Button
               variant={req.status === 'PROCESSED' ? 'secondary' : 'primary'}

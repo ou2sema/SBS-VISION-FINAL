@@ -8,6 +8,7 @@ import {
   query,
   updateDoc,
 } from 'firebase/firestore';
+import { QuoteRequest } from '../../types';
 import { getFirebaseFirestore } from '../firebase/config';
 
 export type InvoiceRequestStatus = 'PENDING' | 'PROCESSED';
@@ -21,6 +22,12 @@ export interface InvoiceRequest {
   email?: string;
   phone: string;
   invoiceNumber?: string;
+  quoteNumber?: string;
+  invoice?: {
+    invoiceNumber: string;
+    downloadUrl: string;
+    storagePath?: string;
+  };
   requestType: InvoiceRequestType;
   notes?: string;
   status: InvoiceRequestStatus;
@@ -32,7 +39,7 @@ export interface NewInvoiceRequest {
   company?: string;
   email?: string;
   phone: string;
-  invoiceNumber?: string;
+  quoteNumber: string;
   requestType: InvoiceRequestType;
   notes?: string;
 }
@@ -65,6 +72,14 @@ export async function checkQuoteEligibility(quoteNumber: string): Promise<QuoteE
     console.warn('Could not validate quote reference:', error);
     return 'NOT_FOUND';
   }
+}
+
+export async function getQuoteForInvoice(quoteNumber: string): Promise<QuoteRequest | null> {
+  const normalized = quoteNumber.trim().toUpperCase();
+  if (!normalized) return null;
+  const snapshot = await getDoc(doc(getFirebaseFirestore(), 'quoteRequests', normalized));
+  if (!snapshot.exists()) return null;
+  return { id: snapshot.id, ...snapshot.data() } as QuoteRequest;
 }
 
 export function subscribeToInvoiceRequests(

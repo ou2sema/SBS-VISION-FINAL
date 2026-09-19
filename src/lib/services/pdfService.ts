@@ -1,9 +1,14 @@
 import { jsPDF } from 'jspdf';
-import { doc, serverTimestamp, updateDoc } from 'firebase/firestore';
+import { doc, serverTimestamp, setDoc, updateDoc } from 'firebase/firestore';
 import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
 import { DevisData } from '../../types';
 import { getFirebaseFirestore, getFirebaseStorage } from '../firebase/config';
-import { isSupabaseConfigured, supabase, supabaseQuotesBucket } from '../supabase/config';
+import {
+  isSupabaseConfigured,
+  supabase,
+  supabaseInvoicesBucket,
+  supabaseQuotesBucket,
+} from '../supabase/config';
 
 /**
  * Creates an offscreen high-resolution image of the SBS VISION emblem + logo
@@ -92,7 +97,7 @@ function createLogoCanvas(): string {
 /**
  * Generates an official, publication-quality PDF Devis for SBS VISION
  */
-export function generateDevisPDF(data: DevisData): jsPDF {
+export function generateDevisPDF(data: DevisData, documentKind: 'devis' | 'facture' = 'devis'): jsPDF {
   const doc = new jsPDF({
     orientation: 'portrait',
     unit: 'mm',
@@ -158,7 +163,11 @@ export function generateDevisPDF(data: DevisData): jsPDF {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(14);
   doc.setTextColor(primaryRed[0], primaryRed[1], primaryRed[2]);
-  doc.text('DEVIS / OFFRE COMMERCIALE', margin + 6, currentY + 8);
+  doc.text(
+    documentKind === 'facture' ? 'FACTURE / DOCUMENT COMMERCIAL' : 'DEVIS / OFFRE COMMERCIALE',
+    margin + 6,
+    currentY + 8
+  );
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8.5);
@@ -179,13 +188,25 @@ export function generateDevisPDF(data: DevisData): jsPDF {
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
   doc.setTextColor(darkNavy[0], darkNavy[1], darkNavy[2]);
-  doc.text(`Devis N° : ${data.quoteNumber}`, metaRightX, currentY + 8, { align: 'right' });
+  doc.text(
+    `${documentKind === 'facture' ? 'Facture' : 'Devis'} N° : ${data.quoteNumber}`,
+    metaRightX,
+    currentY + 8,
+    { align: 'right' }
+  );
 
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
   doc.setTextColor(slateMuted[0], slateMuted[1], slateMuted[2]);
   doc.text(`Date d'émission : ${data.date}`, metaRightX, currentY + 13, { align: 'right' });
-  doc.text(`Validité de l'offre : ${data.validityDays} jours`, metaRightX, currentY + 18, { align: 'right' });
+  doc.text(
+    documentKind === 'facture'
+      ? 'Échéance : à réception'
+      : `Validité de l'offre : ${data.validityDays} jours`,
+    metaRightX,
+    currentY + 18,
+    { align: 'right' }
+  );
 
   currentY += 29;
 
@@ -517,6 +538,66 @@ export async function uploadDevisPDF(
     updatedAt: new Date().toISOString(),
   });
   return { downloadUrl, metadataSynced: true };
+}
+
+export async function uploadFacturePDF(
+  requestId: string,
+  data: DevisData
+): Promise<{ invoiceNumber: string; downloadUrl: string }> {
+  const invoiceNumber = `FAC-${new Date().getFullYear()}-${getSafeQuoteNumber(data.quoteNumber).replace(/^DEV[-_]?/i, '')}`;
+  const invoiceData: DevisData = {
+    ...data,
+    quoteNumber: invoiceNumber,
+    date: new Date().toLocaleDateString('fr-FR'),
+  };
+  const pdfBytes = generateDevisPDF(invoiceData, 'facture').output('arraybuffer') as ArrayBuffer;
+  const storagePath = `invoices/${invoiceNumber}.pdf`;
+
+  if (!isSupabaseConfigured || !supabase) {
+    throw new Error('Supabase Storage n’est pas configuré pour les factures.');
+  }
+
+  const { error: uploadError } = await supabase.storage
+    .from(supabaseInvoicesBucket)
+    .upload(storagePath, pdfBytes, {
+      contentType: 'application/pdf',
+      upsert: true,
+    });
+  if (uploadError) throw uploadError;
+
+  const { data: publicUrlData } = supabase.storage
+    .from(supabaseInvoicesBucket)
+    .getPublicUrl(storagePath);
+  const invoiceMetadata = {
+    invoiceNumber,
+    quoteNumber: data.quoteNumber,
+    requestId,
+    customer: {
+      name: data.customerName,
+      company: data.customerCompany || null,
+      phone: data.customerPhone,
+      email: data.customerEmail || null,
+    },
+    devis: data,
+    status: 'ISSUED',
+    storageProvider: 'supabase',
+    storageBucket: supabaseInvoicesBucket,
+    storagePath,
+    downloadUrl: publicUrlData.publicUrl,
+    generatedAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+
+  await setDoc(doc(getFirebaseFirestore(), 'invoices', invoiceNumber), invoiceMetadata, { merge: true });
+  await updateDoc(doc(getFirebaseFirestore(), 'invoiceRequests', requestId), {
+    status: 'PROCESSED',
+    quoteNumber: data.quoteNumber,
+    invoiceNumber,
+    invoice: invoiceMetadata,
+    updatedAt: new Date().toISOString(),
+  });
+
+  return { invoiceNumber, downloadUrl: publicUrlData.publicUrl };
 }
 
 /**

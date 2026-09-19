@@ -68,7 +68,7 @@ export function InvoiceView() {
         company: formData.company.trim() || undefined,
         phone: formData.phone.trim(),
         email: formData.email.trim() || undefined,
-        invoiceNumber: formData.invoiceNumber.trim() || undefined,
+        quoteNumber: formData.invoiceNumber.trim(),
         requestType: {
           copy: 'COPY',
           correction: 'MODIFICATION',

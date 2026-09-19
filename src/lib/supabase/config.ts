@@ -10,3 +10,4 @@ export const supabase = isSupabaseConfigured
   : null;
 
 export const supabaseQuotesBucket = import.meta.env.VITE_SUPABASE_QUOTES_BUCKET || 'quotes';
+export const supabaseInvoicesBucket = import.meta.env.VITE_SUPABASE_INVOICES_BUCKET || 'invoices';

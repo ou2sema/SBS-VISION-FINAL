@@ -71,6 +71,12 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
+    // Generated invoices and their Supabase Storage metadata.
+    match /invoices/{invoiceId} {
+      allow read, create, update: if isStaff();
+      allow delete: if isAdmin();
+    }
+
     // Product Imports: Staff/Admin only
     match /productImports/{importId} {
       allow read, write: if isAdmin();
