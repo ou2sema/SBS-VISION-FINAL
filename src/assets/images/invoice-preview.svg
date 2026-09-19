@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 760 1040" role="img" aria-labelledby="title desc">
+  <title id="title">Exemple de devis SBS VISION</title>
+  <desc id="desc">Apercu complet d'un devis avec le numero SBS-2026-5434 encadre en rouge.</desc>
+  <rect width="760" height="1040" fill="#d9dde3"/>
+  <rect x="42" y="28" width="676" height="984" rx="3" fill="#ffffff" stroke="#c7cdd5" stroke-width="2"/>
+  <text x="78" y="92" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#0f172a">SBS</text>
+  <text x="145" y="92" font-family="Arial, sans-serif" font-size="30" font-weight="700" fill="#e11d2a">VISION</text>
+  <text x="80" y="118" font-family="Arial, sans-serif" font-size="10" letter-spacing="2" fill="#64748b">SECURITE ELECTRONIQUE &amp; VIDEOSURVEILLANCE IP</text>
+  <text x="680" y="66" text-anchor="end" font-family="Arial, sans-serif" font-size="11" fill="#64748b">SBS VISION SARL</text>
+  <text x="680" y="84" text-anchor="end" font-family="Arial, sans-serif" font-size="10" fill="#64748b">Tunis - Tunisie | +216 54 306 506</text>
+  <text x="680" y="102" text-anchor="end" font-family="Arial, sans-serif" font-size="10" fill="#64748b">contact@sbsvision.tn</text>
+  <line x1="78" y1="145" x2="682" y2="145" stroke="#e11d2a" stroke-width="4"/>
+  <rect x="78" y="172" width="604" height="102" rx="5" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="98" y="207" font-family="Arial, sans-serif" font-size="21" font-weight="700" fill="#e11d2a">DEVIS / OFFRE COMMERCIALE</text>
+  <text x="98" y="232" font-family="Arial, sans-serif" font-size="11" fill="#64748b">Fourniture &amp; installation videosurveillance professionnelle</text>
+  <text x="98" y="254" font-family="Arial, sans-serif" font-size="10" fill="#64748b">Date d'emission : 19/09/2026 | Validite : 30 jours</text>
+  <rect x="503" y="189" width="156" height="58" rx="7" fill="#fff1f2" stroke="#e11d2a" stroke-width="3"/>
+  <text x="581" y="210" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" font-weight="700" fill="#be123c">NUMERO DE DEVIS</text>
+  <text x="581" y="233" text-anchor="middle" font-family="monospace" font-size="16" font-weight="700" fill="#e11d2a">SBS-2026-5434</text>
+  <rect x="78" y="300" width="604" height="82" rx="5" fill="#ffffff" stroke="#e2e8f0"/>
+  <rect x="94" y="316" width="86" height="20" rx="3" fill="#e11d2a"/>
+  <text x="137" y="330" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" font-weight="700" fill="#ffffff">DESTINATAIRE</text>
+  <text x="196" y="330" font-family="Arial, sans-serif" font-size="15" font-weight="700" fill="#0f172a">Samir Ben Saad</text>
+  <text x="98" y="357" font-family="Arial, sans-serif" font-size="10" fill="#64748b">Telephone : +216 54 306 506</text>
+  <text x="390" y="357" font-family="Arial, sans-serif" font-size="10" fill="#64748b">Lieu : Sousse, Tunisie</text>
+  <rect x="78" y="410" width="604" height="35" fill="#0f172a"/>
+  <text x="94" y="433" font-family="Arial, sans-serif" font-size="10" font-weight="700" fill="#ffffff">REFERENCE</text>
+  <text x="220" y="433" font-family="Arial, sans-serif" font-size="10" font-weight="700" fill="#ffffff">DESIGNATION</text>
+  <text x="510" y="433" font-family="Arial, sans-serif" font-size="10" font-weight="700" fill="#ffffff">QTE</text>
+  <text x="570" y="433" font-family="Arial, sans-serif" font-size="10" font-weight="700" fill="#ffffff">TOTAL HT</text>
+  <g font-family="Arial, sans-serif" font-size="10" fill="#334155">
+    <line x1="78" y1="480" x2="682" y2="480" stroke="#e2e8f0"/>
+    <text x="94" y="468">DH-IPC-HFW3549T1</text><text x="220" y="468">Camera Dahua TiOC 5MP</text><text x="515" y="468">4</text><text x="570" y="468">1880.000 DT</text>
+    <line x1="78" y1="515" x2="682" y2="515" stroke="#e2e8f0"/>
+    <text x="94" y="503">DHI-NVR4216-16P</text><text x="220" y="503">Enregistreur NVR 16 canaux PoE</text><text x="515" y="503">1</text><text x="570" y="503">1250.000 DT</text>
+    <line x1="78" y1="550" x2="682" y2="550" stroke="#e2e8f0"/>
+    <text x="94" y="538">WD43PURZ-4TB</text><text x="220" y="538">Disque dur surveillance 4TB</text><text x="515" y="538">1</text><text x="570" y="538">380.000 DT</text>
+    <line x1="78" y1="585" x2="682" y2="585" stroke="#e2e8f0"/>
+    <text x="94" y="573">MO-INST-CFG</text><text x="220" y="573">Pose, cablage et parametrage</text><text x="515" y="573">1</text><text x="570" y="573">350.000 DT</text>
+  </g>
+  <rect x="78" y="625" width="350" height="132" rx="5" fill="#f8fafc" stroke="#e2e8f0"/>
+  <text x="96" y="652" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#e11d2a">GARANTIES &amp; CONDITIONS</text>
+  <text x="96" y="677" font-family="Arial, sans-serif" font-size="10" fill="#64748b">Materiel garanti 2 ans constructeur</text>
+  <text x="96" y="699" font-family="Arial, sans-serif" font-size="10" fill="#64748b">Cablage et parametrage inclus</text>
+  <text x="96" y="721" font-family="Arial, sans-serif" font-size="10" fill="#64748b">50% a la commande, solde a la mise en service</text>
+  <text x="96" y="743" font-family="Arial, sans-serif" font-size="10" fill="#64748b">Intervention sous 48h a 72h</text>
+  <rect x="448" y="625" width="234" height="132" rx="5" fill="#ffffff" stroke="#e2e8f0"/>
+  <text x="466" y="654" font-family="Arial, sans-serif" font-size="11" fill="#64748b">Total Brut HT</text><text x="660" y="654" text-anchor="end" font-family="Arial, sans-serif" font-size="11" fill="#0f172a">3860.000 DT</text>
+  <text x="466" y="680" font-family="Arial, sans-serif" font-size="11" fill="#64748b">TVA (19%)</text><text x="660" y="680" text-anchor="end" font-family="Arial, sans-serif" font-size="11" fill="#0f172a">733.400 DT</text>
+  <line x1="466" y1="695" x2="660" y2="695" stroke="#e2e8f0"/>
+  <rect x="460" y="710" width="210" height="31" rx="4" fill="#e11d2a"/>
+  <text x="474" y="730" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#ffffff">TOTAL TTC</text><text x="656" y="730" text-anchor="end" font-family="Arial, sans-serif" font-size="11" font-weight="700" fill="#ffffff">4594.400 TND</text>
+  <rect x="78" y="806" width="290" height="94" rx="5" fill="#ffffff" stroke="#e2e8f0"/>
+  <text x="96" y="833" font-family="Arial, sans-serif" font-size="10" font-weight="700" fill="#0f172a">BON POUR ACCORD &amp; COMMANDE</text>
+  <text x="96" y="856" font-family="Arial, sans-serif" font-size="9" fill="#64748b">Date et signature du client</text>
+  <rect x="392" y="806" width="290" height="94" rx="5" fill="#ffffff" stroke="#e2e8f0"/>
+  <text x="410" y="833" font-family="Arial, sans-serif" font-size="10" font-weight="700" fill="#e11d2a">POUR SBS VISION SARL</text>
+  <text x="410" y="856" font-family="Arial, sans-serif" font-size="9" fill="#64748b">Cachet commercial et direction technique</text>
+  <line x1="78" y1="940" x2="682" y2="940" stroke="#e2e8f0"/>
+  <text x="380" y="968" text-anchor="middle" font-family="Arial, sans-serif" font-size="9" fill="#94a3b8">SBS VISION SARL | Tunis | +216 54 306 506 | contact@sbsvision.tn</text>
+</svg>

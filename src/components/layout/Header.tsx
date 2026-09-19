@@ -4,6 +4,7 @@ import { Phone, Menu, X, ChevronRight, FileText, Shield } from 'lucide-react';
 import { LanguageSwitcher } from '../ui/LanguageSwitcher';
 import { Button } from '../ui/Button';
 import { Logo } from '../ui/Logo';
+import invoicePreview from '../../assets/images/invoice-preview.svg';
 
 interface HeaderProps {
   onNavigate?: (view: string) => void;
@@ -214,19 +215,16 @@ export function Header({ onNavigate, activeView = 'home' }: HeaderProps) {
                 : 'Le numéro demandé se trouve sur votre devis, dans la zone de référence du document.'}
             </p>
 
-            <div className="rounded-xl border border-[#232934] bg-[#08090C] p-4 space-y-3">
-              <div className="flex items-center justify-between text-[10px] uppercase tracking-wider text-[#6B7280]">
-                <span>SBS VISION</span>
-                <span>Exemple de devis</span>
-              </div>
-              <div className="border-t border-[#232934] pt-3 flex items-center justify-between gap-4">
-                <span className="text-sm font-bold text-white">Devis / Offre commerciale</span>
-                <span className="rounded-md bg-[#E11D2A] px-3 py-1.5 font-mono text-sm font-bold text-white ring-4 ring-[#E11D2A]/20">
-                  SBS-2026-5434
-                </span>
+            <div className="rounded-xl border border-[#232934] bg-[#08090C] p-3 space-y-3">
+              <div className="max-h-[52vh] overflow-y-auto rounded-lg bg-[#d9dde3]">
+                <img
+                  src={invoicePreview}
+                  alt="Exemple complet de devis avec numero de devis mis en evidence"
+                  className="block w-full h-auto"
+                />
               </div>
               <p className="text-[11px] text-[#9CA3AF]">
-                {locale === 'ar' ? 'هذا الرقم هو المرجع الذي يجب إدخاله في النموذج.' : 'C’est cette référence qu’il faut saisir dans le formulaire.'}
+                {locale === 'ar' ? 'الرقم المحدد بالأحمر هو المرجع المطلوب في النموذج.' : 'Le numéro encadré en rouge est la référence à saisir dans le formulaire.'}
               </p>
             </div>
 
