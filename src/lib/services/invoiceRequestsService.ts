@@ -37,8 +37,11 @@ export interface NewInvoiceRequest {
 
 export async function createInvoiceRequest(request: NewInvoiceRequest): Promise<string> {
   const createdAt = new Date().toISOString();
+  const payload = Object.fromEntries(
+    Object.entries(request).filter(([, value]) => value !== undefined && value !== '')
+  );
   const document = await addDoc(collection(getFirebaseFirestore(), 'invoiceRequests'), {
-    ...request,
+    ...payload,
     status: 'PENDING',
     createdAt,
   });
