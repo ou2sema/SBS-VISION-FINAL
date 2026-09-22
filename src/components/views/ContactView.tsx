@@ -133,7 +133,6 @@ export function ContactView() {
         </div>
         <Card className="p-4 bg-[#101318] border border-[#232934] overflow-hidden">
           <GoogleMap 
-            apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ''}
             latitude={36.8065}
             longitude={10.1815}
             zoom={14}
