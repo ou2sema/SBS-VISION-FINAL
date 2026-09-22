@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react';
 import { useI18n } from '../../i18n/context';
 
 interface GoogleMapProps {
-  apiKey: string;
   latitude?: number;
   longitude?: number;
   zoom?: number;
@@ -10,7 +9,6 @@ interface GoogleMapProps {
 }
 
 export function GoogleMap({ 
-  apiKey, 
   latitude = 36.8065, // Tunis par défaut
   longitude = 10.1815, 
   zoom = 13,
@@ -19,8 +17,16 @@ export function GoogleMap({
   const mapRef = useRef<HTMLDivElement>(null);
   const { locale } = useI18n();
   const isLoaded = useRef(false);
+  
+  // Récupérer la clé API depuis les variables d'environnement
+  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
   useEffect(() => {
+    if (!apiKey) {
+      console.error('Google Maps API key is missing. Please add VITE_GOOGLE_MAPS_API_KEY to your .env file.');
+      return;
+    }
+
     // Charger le script Google Maps dynamiquement
     if (!window.google || !isLoaded.current) {
       const script = document.createElement('script');
