@@ -5,7 +5,8 @@ import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
 import { Textarea } from '../ui/Textarea';
 import { Badge } from '../ui/Badge';
-import { Phone, CheckCircle2 } from 'lucide-react';
+import { Phone, CheckCircle2, MapPin } from 'lucide-react';
+import { GoogleMap } from '../ui/GoogleMap';
 
 export function ContactView() {
   const { t, locale } = useI18n();
@@ -23,7 +24,7 @@ export function ContactView() {
   };
 
   return (
-    <div className="space-y-8 py-6 max-w-3xl mx-auto">
+    <div className="space-y-8 py-6 max-w-6xl mx-auto">
       <div className="space-y-3 text-center sm:text-start">
         <Badge variant="accent">{t('nav.contact')}</Badge>
         <h1 className="text-3xl sm:text-4xl font-extrabold text-[#FFFFFF]">
@@ -36,6 +37,7 @@ export function ContactView() {
         </p>
       </div>
 
+      {/* Contact Info & Form Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {/* Direct Phone Card */}
         <Card className="p-6 md:col-span-1 space-y-4 bg-[#101318] border border-[#232934] flex flex-col justify-between">
@@ -119,6 +121,30 @@ export function ContactView() {
             </form>
           )}
         </Card>
+      </div>
+
+      {/* Google Maps Section */}
+      <div className="space-y-4">
+        <div className="flex items-center gap-2">
+          <MapPin className="w-5 h-5 text-[#E11D2A]" />
+          <h2 className="text-xl font-bold text-[#FFFFFF]">
+            {locale === 'ar' ? 'موقعنا على الخريطة' : 'Notre Localisation'}
+          </h2>
+        </div>
+        <Card className="p-4 bg-[#101318] border border-[#232934] overflow-hidden">
+          <GoogleMap 
+            apiKey={import.meta.env.VITE_GOOGLE_MAPS_API_KEY || ''}
+            latitude={36.8065}
+            longitude={10.1815}
+            zoom={14}
+            markerTitle={locale === 'ar' ? 'مقر شركة SBS VISION - تونس' : 'Siège SBS VISION - Tunis'}
+          />
+        </Card>
+        <p className="text-xs text-[#9CA3AF] text-center">
+          {locale === 'ar'
+            ? 'توجد مكاتبنا في العاصمة تونس. نتدخل في جميع الولايات التونسية.'
+            : 'Nos bureaux sont situés à Tunis. Nous intervenons dans tous les gouvernorats de Tunisie.'}
+        </p>
       </div>
     </div>
   );

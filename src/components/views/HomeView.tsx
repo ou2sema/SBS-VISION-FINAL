@@ -4,6 +4,7 @@ import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import { Badge } from '../ui/Badge';
 import { Logo } from '../ui/Logo';
+import { ProductSlider } from '../ui/ProductSlider';
 import {
   Shield,
   Phone,
@@ -449,7 +450,35 @@ export function HomeView({ onNavigate }: HomeViewProps) {
       </section>
 
       {/* 3. Featured Products & Systems Showcase (Dahua & Hikvision) */}
-      <section className="space-y-6">
+      <section className="space-y-8">
+        {/* Product Slider - Auto-playing carousel of featured products */}
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <Badge variant="accent" className="mb-2">
+                <Camera className="w-3.5 h-3.5" />
+                {locale === 'ar' ? 'جولة على منتجاتنا' : 'Découvrez Nos Produits'}
+              </Badge>
+              <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-[#FFFFFF]">
+                {locale === 'ar' ? 'أفضل أنظمة الحماية والمراقبة' : 'Nos Solutions de Sécurité Premium'}
+              </h2>
+            </div>
+          </div>
+          
+          <ProductSlider 
+            products={featuredProducts.map(p => ({
+              id: p.id,
+              name: p.name,
+              image: p.image,
+              badge: p.badge,
+              price: p.price,
+              tagline: p.tagline
+            }))}
+            autoPlay={true}
+            autoPlayInterval={5000}
+          />
+        </div>
+
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-[#232934] pb-4">
           <div>
             <Badge variant="accent" className="mb-2">
